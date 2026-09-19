@@ -1,0 +1,14 @@
+{
+  "include": [
+    "app",
+    "scripts",
+    "tests"
+  ],
+  "pythonPath": "C:\\Program Files\\Python314\\python.exe",
+  "pythonPlatform": "Windows",
+  "pythonVersion": "3.14",
+  "extraPaths": [
+    "C:\\Users\\santh\\AppData\\Roaming\\Python\\Python314\\site-packages",
+    "c:\\Users\\santh\\OneDrive\\Desktop\\Flyy_Ai"
+  ]
+}
