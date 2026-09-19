@@ -1,0 +1,31 @@
+# Environment variables
+.env
+
+# Python cache and testing
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local database runtime / binaries (if running locally outside docker)
+.infra/
+.pgdata/
+data/
+
+# IDE
+.vscode/
+.idea/
+
+# Node / Frontend
+node_modules/
+dist/
+frontend/node_modules/
+frontend/dist/
+.eslintcache
+
+# Virtual environments
+venv/
+.venv/
+env/
