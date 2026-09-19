@@ -114,8 +114,10 @@ def setup_postgresql():
         "-c", createdb_sql
     ], env=env, check=False)
 
-    # Run docker/init.sql
-    init_sql_path = BASE_DIR / "docker" / "init.sql"
+    # Run database/init.sql
+    init_sql_path = BASE_DIR / "database" / "init.sql"
+    if not init_sql_path.exists():
+        init_sql_path = BASE_DIR / "docker" / "init.sql"
     subprocess.run([
         str(psql_exe),
         "-h", "localhost",

@@ -16,12 +16,17 @@ import time
 import threading
 from pathlib import Path
 
-# Add project root to sys.path
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+# Add project root and backend to sys.path
+ROOT_DIR = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT_DIR))
+sys.path.insert(1, str(ROOT_DIR / "backend"))
 
 import requests
 import uvicorn
-from app.main import app
+try:
+    from backend.app.main import app
+except ImportError:
+    from app.main import app
 
 BASE_URL = "http://localhost:8000"
 

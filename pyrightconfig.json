@@ -1,14 +1,16 @@
 {
   "include": [
-    "app",
-    "scripts",
-    "tests"
+    "backend",
+    "database",
+    "scripts"
   ],
-  "pythonPath": "C:\\Program Files\\Python314\\python.exe",
   "pythonPlatform": "Windows",
   "pythonVersion": "3.14",
   "extraPaths": [
-    "C:\\Users\\santh\\AppData\\Roaming\\Python\\Python314\\site-packages",
-    "c:\\Users\\santh\\OneDrive\\Desktop\\Flyy_Ai"
+    "backend",
+    ".",
+    "c:\\Users\\santh\\OneDrive\\Desktop\\Flyy_Ai",
+    "c:\\Users\\santh\\OneDrive\\Desktop\\Flyy_Ai\\backend",
+    "C:\\Users\\santh\\AppData\\Roaming\\Python\\Python314\\site-packages"
   ]
 }

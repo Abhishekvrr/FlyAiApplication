@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ShieldCheck, Download, Search, Filter, Lock, Shield, CheckCircle2, AlertOctagon, UserPlus, Database, ArrowRight } from 'lucide-react';
 import { api } from '../../services/api';
 
-export default function CustomersTab({ onOpenAddCustomer }) {
+export default function CustomersTab({ onOpenAddCustomer, refreshKey }) {
   const [customers, setCustomers] = useState([]);
   const [sourceCustomers, setSourceCustomers] = useState([]);
   const [showSourceStore, setShowSourceStore] = useState(false);
@@ -41,7 +41,8 @@ export default function CustomersTab({ onOpenAddCustomer }) {
   useEffect(() => {
     fetchCustomers();
     fetchSourceCustomers();
-  }, [cityFilter, segmentFilter]);
+  }, [cityFilter, segmentFilter, refreshKey]);
+
 
   const handleExportCSV = async () => {
     setDownloading(true);
@@ -70,62 +71,67 @@ export default function CustomersTab({ onOpenAddCustomer }) {
   });
 
   return (
-    <div className="space-y-6">
-      {/* Header & CSV Download */}
-      <div className="glass-panel p-5 rounded-2xl flex flex-col md:flex-row md:items-center md:justify-between gap-4 border border-slate-200">
+    <div className="space-y-5">
+      {/* Header with Prominent CSV Export */}
+      <div className="glass-panel p-4 sm:p-5 rounded-2xl flex flex-col md:flex-row md:items-center md:justify-between gap-3 border border-slate-200 shadow-2xs">
         <div>
-          <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <ShieldCheck className="h-5 w-5 text-emerald-600" />
-            Protected Customer Store (Downstream De-identified Store)
-          </h2>
-          <p className="text-xs text-slate-600 mt-1">
-            Data queried <strong>strictly and exclusively</strong> from <code className="text-emerald-800 bg-emerald-50 px-1.5 py-0.5 rounded font-mono font-semibold">protected_store.customers_protected</code>.
-            Downstream services, marketing, and analytical tools operate solely on tokens & FPE integers without raw PII exposure.
+          <div className="flex items-center gap-2">
+            <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+              <ShieldCheck className="h-5 w-5 text-emerald-600" />
+              Protected Customer Store
+            </h2>
+            <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+              Zero Plaintext
+            </span>
+          </div>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Querying <code className="text-emerald-800 bg-emerald-50 px-1 py-0.5 rounded font-mono font-semibold">protected_store.customers_protected</code> &bull; Tokens &amp; 10-digit FF1 phone integers
           </p>
         </div>
 
-        <div className="flex items-center flex-wrap gap-2.5">
-          <button
-            type="button"
-            onClick={onOpenAddCustomer}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-sm transition-all"
-          >
-            <UserPlus className="h-4 w-4" />
-            Add Customer Details
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setShowSourceStore(!showSourceStore)}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-300 transition-colors"
-          >
-            <Database className="h-3.5 w-3.5 text-slate-600" />
-            {showSourceStore ? 'Hide Source Comparison' : 'Compare with Source DB'}
-          </button>
-
+        <div className="flex items-center flex-wrap gap-2">
           <button
             type="button"
             onClick={handleExportCSV}
             disabled={downloading}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs font-semibold shadow-2xs transition-all disabled:opacity-50"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition-all disabled:opacity-50"
           >
-            <Download className="h-3.5 w-3.5 text-indigo-600" />
-            {downloading ? 'Exporting...' : 'Export CSV'}
+            <Download className="h-3.5 w-3.5 text-white" />
+            <span>{downloading ? 'Generating CSV...' : 'Export Protected CSV'}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={onOpenAddCustomer}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white text-xs font-bold shadow-sm hover:shadow-indigo-200 transition-all hover:scale-[1.02] active:scale-[0.98]"
+            title="Add customer permanently to PostgreSQL database"
+          >
+            <UserPlus className="h-4 w-4" />
+            <span>+ Add New Customer</span>
+          </button>
+
+
+          <button
+            type="button"
+            onClick={() => setShowSourceStore(!showSourceStore)}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-200 transition-colors"
+          >
+            <Database className="h-3.5 w-3.5 text-slate-600" />
+            <span>{showSourceStore ? 'Hide Source' : 'Compare Source'}</span>
           </button>
         </div>
       </div>
 
-      {/* Compliance Notice Banner */}
-      <div className="p-3.5 rounded-xl bg-indigo-50/70 border border-indigo-200 text-xs text-indigo-900 flex items-center justify-between">
+      {/* Quick Security Guarantee Micro-Badge */}
+      <div className="px-4 py-2.5 rounded-xl bg-indigo-50/60 border border-indigo-200/80 text-xs text-indigo-900 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Shield className="h-4 w-4 shrink-0 text-indigo-600" />
-          <span>
-            <strong>Downstream Safety Guarantee:</strong> All queries, analytical workflows, and exports contain 0% plaintext PII.
-            Phone numbers preserve exactly 10 numeric digits via FF1 Format-Preserving Encryption.
+          <span className="text-[11px]">
+            <strong>Zero Plaintext Guarantee:</strong> Relational joins use HMAC deterministic tokens. Mobile numbers preserve 10 digits via FF1 FPE.
           </span>
         </div>
-        <span className="hidden sm:inline-block text-[10px] font-mono text-indigo-800 font-bold uppercase bg-indigo-100 px-2 py-0.5 rounded border border-indigo-200">
-          Zero-PII Export
+        <span className="hidden sm:inline-block text-[10px] font-mono text-indigo-800 font-bold bg-indigo-100/80 px-2 py-0.5 rounded border border-indigo-200">
+          Total: {total} Records
         </span>
       </div>
 

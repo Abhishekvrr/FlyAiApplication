@@ -219,14 +219,15 @@ python scripts\start_services.py
 #### Step 4: Seed Sample Customer Data
 Populate `source_store.customers` with 50 realistic customer records:
 ```bash
-python scripts/seed_source.py
+python database/seed_source.py
 ```
 
 #### Step 5: Start the FastAPI Backend Gateway
-In a terminal, start the Privacy Gateway API:
+In a terminal, start the Privacy Gateway API using the runner:
 ```bash
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+python backend/run.py
 ```
+*(Or directly via Uvicorn: `uvicorn backend.app.main:app --reload --host 0.0.0.0 --port 8000`)*
 - API Health: `http://localhost:8000/health`
 - Interactive Swagger UI: `http://localhost:8000/docs`
 
@@ -249,10 +250,10 @@ Run the full infrastructure stack in isolated containers:
 docker-compose up -d
 
 # Seed the database
-python scripts/seed_source.py
+python database/seed_source.py
 
 # Run FastAPI and Frontend
-uvicorn app.main:app --reload --port 8000
+python backend/run.py
 cd frontend && npm run dev
 ```
 
@@ -379,65 +380,51 @@ python -m pytest tests/test_api.py -v
 
 ```
 Flyy_Ai/
-├── app/
-│   ├── api/                     # FastAPI Route Controllers
-│   │   ├── actions.py           # Campaign execution & bounce webhooks
-│   │   ├── audit.py             # Tamper-evident audit trail endpoints
-│   │   ├── auth.py              # User authentication & role verification
-│   │   ├── batch.py             # Batch ingestion pipeline endpoints
-│   │   ├── customers.py         # Protected & vaulted customer queries
-│   │   ├── discovery.py         # Automated PII discovery profiling
-│   │   ├── policies.py          # Privacy rule definitions
-│   │   ├── privacy_settings.py  # Global vault settings
-│   │   └── reveal.py            # PBAC Justified Reveal API
-│   ├── crypto/                  # Core Cryptographic Vault Primitives
-│   │   ├── fpe.py               # NIST FF1 Format-Preserving Encryption
-│   │   ├── tokenizer.py         # Deterministic / Non-Deterministic Tokenizer
-│   │   └── vault_crypto.py      # AES-256-GCM Vault Encryption
-│   ├── db/                      # Database engine & session management
-│   │   └── session.py
-│   ├── discovery/               # PII Inspection Engine
-│   │   └── pii_engine.py        # Presidio + Regex + Entropy Scanners
-│   ├── pipeline/                # ETL & Stream Ingestion Pipeline
-│   │   └── ingestion.py
-│   └── main.py                  # Application entry point & CORS
+├── backend/                     # Python FastAPI Application & Cryptographic Vault
+│   ├── app/                     # Backend application package
+│   │   ├── api/                 # FastAPI route controllers (audit, batch, reveal, etc.)
+│   │   ├── crypto/              # FPE (FF1), AES-256-GCM Vault, Tokenizer
+│   │   ├── db/                  # SQLAlchemy engine & session dependency
+│   │   ├── discovery/           # Presidio + regex PII scanner engine
+│   │   ├── pipeline/            # High-throughput batch ingestion pipeline
+│   │   └── main.py              # Application entry point & CORS configuration
+│   ├── tests/                   # Automated pytest test suite
+│   │   ├── test_api.py          # E2E integration test suite
+│   │   └── test_crypto.py       # Unit tests for FPE, AES-GCM, and Tokenizer
+│   ├── requirements.txt         # Backend Python dependencies
+│   ├── run.py                   # One-command backend runner with auto-reload
+│   └── README.md                # Backend documentation
 │
 ├── frontend/                    # Modern React 18 + Vite + Tailwind CSS Dashboard
 │   ├── src/
-│   │   ├── components/
-│   │   │   ├── auth/            # Authentication & session modals
-│   │   │   ├── customers/       # Add customer & table components
-│   │   │   ├── onboarding/      # Interactive hero explainer banner
-│   │   │   ├── settings/        # Privacy settings modal
-│   │   │   ├── tabs/            # 9 Evaluation screens (Architecture, Discovery, etc.)
-│   │   │   ├── GuidedTourModal.jsx # 13-Point Guided Evaluation Walkthrough
-│   │   │   ├── Header.jsx       # Global header with role-switch dropdown
-│   │   │   └── Navigation.jsx   # Tabbed evaluation navigation bar
+│   │   ├── components/          # React evaluation modules & UI components
 │   │   ├── context/             # React Context for Auth and Roles
 │   │   ├── services/            # Axios API client
 │   │   └── App.jsx              # Main React container
 │   ├── package.json
 │   ├── tailwind.config.js
-│   └── vite.config.js
+│   ├── vite.config.js
+│   └── README.md
 │
-├── docker/                      # Container configs
-│   └── init.sql                 # Multi-schema database initialization
-├── docker-compose.yml           # PostgreSQL 15 & Mailpit orchestration
-├── docs/                        # Documentation & Visual Assets
-│   └── images/
-│       ├── banner.jpg           # High-resolution platform banner
-│       └── pipeline_architecture.jpg # Pipeline infographic diagram
-├── scripts/                     # Operational & Utility Scripts
+├── database/                    # PostgreSQL Schema DDL, Seeds & Verification
+│   ├── init.sql                 # Multi-schema isolation setup (source, protected, vault, etc.)
 │   ├── seed_source.py           # Seeds 50 realistic customer records
-│   ├── setup_infra.py           # Downloads & sets up local Postgres/Mailpit
-│   ├── start_services.py        # Launches background services
-│   └── verify_api.py            # Smoke test verification script
-├── tests/                       # Pytest Suite
-│   ├── test_api.py              # API & integration tests
-│   └── test_crypto.py           # Unit tests for FPE, AES-GCM, and Tokens
-├── .env.example                 # Template for environment configuration
-├── requirements.txt             # Python backend dependencies
-└── README.md                    # Project documentation
+│   ├── verify_db.py             # Schema & table integrity smoke tester
+│   └── README.md                # Database architecture documentation
+│
+├── scripts/                     # Infrastructure Lifecycle & Smoke Test Runners
+│   ├── start_services.py        # Launches background Postgres 15 & Mailpit
+│   ├── setup_infra.py           # Downloads & installs Postgres & Mailpit binaries
+│   ├── service_daemon.py        # Background service monitor
+│   └── verify_api.py            # API smoke test verification script
+│
+├── docs/                        # Architecture diagrams & visual assets
+├── docker-compose.yml           # PostgreSQL 15 & Mailpit container orchestration
+├── pyrightconfig.json           # Multi-directory type-checking configuration
+├── .vscode/settings.json        # Workspace extraPaths configuration
+├── .env / .env.example          # Environment variables
+├── requirements.txt             # Root convenience requirements pointer
+└── README.md                    # Project master documentation
 ```
 
 ---

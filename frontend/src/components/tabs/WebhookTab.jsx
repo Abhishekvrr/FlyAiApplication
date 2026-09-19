@@ -61,20 +61,24 @@ export default function WebhookTab() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Header Panel */}
-      <div className="glass-panel p-5 rounded-2xl border border-slate-200">
-        <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-          <RotateCcw className="h-5 w-5 text-indigo-600" />
-          Inbound Webhook Reverse-Resolution & Bounce Remapping
-        </h2>
-        <p className="text-xs text-slate-600 mt-1">
-          When external email service providers (SendGrid, SES, Mailgun) return bounce or complaint callbacks with raw emails,
-          the Privacy Gateway <strong>deterministically remaps the raw address to its token</strong> and updates customer state without persisting raw PII downstream.
+      <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs">
+        <div className="flex items-center gap-2">
+          <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+            <RotateCcw className="h-5 w-5 text-indigo-600" />
+            Inbound Bounce Reverse-Resolution
+          </h2>
+          <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200">
+            HMAC Remapping
+          </span>
+        </div>
+        <p className="text-xs text-slate-500 mt-0.5">
+          Reverse-resolves raw provider bounce emails to deterministic tokens &bull; Updates customer flags without storing plaintext PII
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Left Column: Webhook Simulator Form */}
         <div className="lg:col-span-5 glass-panel p-5 rounded-2xl space-y-4 border border-slate-200">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">

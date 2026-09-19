@@ -49,32 +49,36 @@ export default function RevealTab() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Header */}
-      <div className="glass-panel p-5 rounded-2xl border border-slate-200">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <div>
-            <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-              <KeyRound className="h-5 w-5 text-amber-600" />
-              Controlled Exception Reveal (Policy-Based Access Control)
-            </h2>
-            <p className="text-xs text-slate-600 mt-1">
-              Strictly governs the core philosophy: <strong>"Protected by Default, Reveal by Exception"</strong>.
-              Requires an authorized role, valid business purpose, and mandatory ticket reference. Every request writes an immutable audit record.
+            <div className="flex items-center gap-2">
+              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                <KeyRound className="h-5 w-5 text-amber-600" />
+                Controlled Exception Reveal
+              </h2>
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
+                PBAC Enforced
+              </span>
+            </div>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Dual-custody exception unmasking &bull; Requires declared purpose, authorized role, and ticket reference
             </p>
           </div>
 
-          <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200">
             <UserCheck className="h-4 w-4 text-indigo-600" />
             <div className="text-left">
-              <span className="text-[10px] text-slate-500 uppercase font-semibold block">Acting Role</span>
+              <span className="text-[9px] text-slate-400 uppercase font-bold block">Current Acting Role</span>
               <span className="text-xs font-bold text-slate-900">{role.name}</span>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Left Column: PBAC Exception Form */}
         <div className="lg:col-span-5 glass-panel p-5 rounded-2xl space-y-4 border border-slate-200">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -88,18 +92,41 @@ export default function RevealTab() {
 
           <form onSubmit={handleReveal} className="space-y-3.5">
             <div>
-              <label className="block text-[11px] font-semibold text-slate-700 mb-1">
-                Customer Identifier
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-[11px] font-semibold text-slate-700">
+                  Customer Identifier
+                </label>
+                <span className="text-[10px] text-slate-400 font-medium">Quick Suggestions:</span>
+              </div>
+
+              {/* Quick Suggested Customer ID Pills */}
+              <div className="flex items-center gap-1.5 mb-2 flex-wrap">
+                {['C052', 'C053', 'C001', 'C002'].map((cid) => (
+                  <button
+                    key={cid}
+                    type="button"
+                    onClick={() => setCustomerId(cid)}
+                    className={`text-[11px] font-mono font-bold px-2 py-0.5 rounded border transition-all ${
+                      customerId === cid
+                        ? 'bg-amber-600 text-white border-amber-700 shadow-xs'
+                        : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200'
+                    }`}
+                  >
+                    {cid === 'C052' ? '★ C052 (Your Record)' : cid}
+                  </button>
+                ))}
+              </div>
+
               <input
                 type="text"
                 required
                 value={customerId}
                 onChange={(e) => setCustomerId(e.target.value)}
-                placeholder="e.g. C001, C002..."
-                className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-900 font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder="e.g. C052, C001..."
+                className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-900 font-mono font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
+
 
             <div>
               <label className="block text-[11px] font-semibold text-slate-700 mb-1">

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../services/api';
-import { Shield, Sparkles, UserPlus, CheckCircle2, AlertCircle, RefreshCw, X, ArrowRight, Lock, Key } from 'lucide-react';
+import { Shield, Sparkles, UserPlus, CheckCircle2, AlertCircle, RefreshCw, X, ArrowRight, Lock, Key, Database } from 'lucide-react';
+import { soundFX } from '../../utils/audio';
 
 export const AddCustomerModal = ({ isOpen, onClose, onCustomerCreated }) => {
   const [name, setName] = useState('');
@@ -78,6 +79,7 @@ export const AddCustomerModal = ({ isOpen, onClose, onCustomerCreated }) => {
         auto_protect: autoProtect,
       });
       setCreatedResult(res);
+      soundFX.playSuccessChime();
       if (onCustomerCreated) onCustomerCreated(res);
     } catch (err) {
       setError(err.response?.data?.detail || 'Failed to create customer record.');
@@ -105,10 +107,10 @@ export const AddCustomerModal = ({ isOpen, onClose, onCustomerCreated }) => {
             </div>
             <div>
               <h3 className="text-base font-bold text-slate-900">
-                Add New Customer Details
+                Add New Customer Record
               </h3>
               <p className="text-xs text-slate-600">
-                Source Store Ingestion with Live Cryptographic De-Identification Preview
+                Permanent PostgreSQL Ingestion with Live Cryptographic De-Identification
               </p>
             </div>
           </div>
@@ -122,6 +124,25 @@ export const AddCustomerModal = ({ isOpen, onClose, onCustomerCreated }) => {
 
         {/* Content Body */}
         <div className="p-6 overflow-y-auto space-y-4">
+          
+          {/* Permanent Database Storage Guarantee Banner */}
+          <div className="p-3 rounded-xl bg-gradient-to-r from-indigo-50/90 via-blue-50/80 to-slate-50 border border-indigo-200/90 text-xs flex items-start gap-2.5 shadow-2xs">
+            <div className="w-6 h-6 rounded-lg bg-indigo-600 text-white flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
+              <Database className="w-3.5 h-3.5" />
+            </div>
+            <div>
+              <div className="font-bold text-slate-900 flex items-center gap-1.5">
+                <span>Guaranteed Permanent PostgreSQL Storage</span>
+                <span className="text-[9px] font-mono font-bold bg-indigo-100 text-indigo-800 px-1.5 py-0.5 rounded">
+                  Active DB Commit
+                </span>
+              </div>
+              <p className="text-slate-600 text-[11px] mt-0.5 leading-snug">
+                Customer records are committed to disk in PostgreSQL (<code className="font-mono text-indigo-700 font-semibold">cdp_platform</code>). Your data persists permanently across server restarts and browser reloads.
+              </p>
+            </div>
+          </div>
+
           {error && (
             <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-start gap-2">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
@@ -286,15 +307,21 @@ export const AddCustomerModal = ({ isOpen, onClose, onCustomerCreated }) => {
           ) : (
             /* SUCCESS CONFIRMATION VIEW */
             <div className="space-y-4 animate-in fade-in">
-              <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 flex items-start gap-3">
+              <div className="p-4 bg-emerald-50 border border-emerald-300 rounded-xl text-emerald-900 flex items-start gap-3 shadow-xs">
                 <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="text-sm font-bold">Customer Ingestion & Protection Succeeded!</h4>
-                  <p className="text-xs text-emerald-700 mt-0.5">
-                    Customer record <span className="font-mono font-bold">{createdResult.source_record?.customer_id}</span> has been saved and transformed into the Protected CDP Store.
+                  <div className="flex items-center gap-2">
+                    <h4 className="text-sm font-bold">Permanently Stored in PostgreSQL Database!</h4>
+                    <span className="text-[10px] font-mono bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded-full font-bold">
+                      Committed to Disk
+                    </span>
+                  </div>
+                  <p className="text-xs text-emerald-800 mt-1 leading-relaxed">
+                    Customer record <span className="font-mono font-bold text-slate-900 bg-white/90 px-1.5 py-0.5 rounded border border-emerald-200">{createdResult.source_record?.customer_id}</span> has been permanently saved in PostgreSQL (<code className="font-mono font-semibold">cdp_platform</code>) and transformed into the Protected CDP Store. You can reopen the application anytime; your records persist.
                   </p>
                 </div>
               </div>
+
 
               {/* Side by side comparison */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs font-mono">
